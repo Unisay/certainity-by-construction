@@ -1,0 +1,5 @@
+name: Chapter1
+include:
+  src
+depend:
+  standard-library
