@@ -1,7 +1,5 @@
 module Chapter1 where
 
-module Booleans where
-
 data Bool : Set where
   true : Bool
   false : Bool
@@ -33,7 +31,6 @@ true ∧ other = other
 false ∧ other = false
 
 module Example-Employees where
-  open Booleans
   open import Data.String using (String)
 
   data Department : Set where
@@ -69,14 +66,12 @@ module Sandbox-Tuple where
 
   open _×_
   open _⊎_
-  open Booleans
 
   my-tuple : Bool × Bool
   my-tuple = record { proj₁ = true ; proj₂ = true }
 
   first : {A : Set} {B : Set} -> A × B -> A
   first record { proj₁ = ₁ } = ₁
-
 
   second : {A : Set} {B : Set} -> A × B -> B
   second a×b = a×b .proj₂
@@ -102,8 +97,12 @@ module Sandbox-Implicits where
 
   open import Data.Bool
     using (Bool; true; false; not; _∨_; _∧_)
+
+  {-
   open import Data.Product 
     renaming ( _,′_     to _,_
              ; curry′   to curry
              ; uncurry′ to uncurry
-             ) 
+             )
+  -}
+ 
