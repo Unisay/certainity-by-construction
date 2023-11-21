@@ -21,6 +21,15 @@ module Sandbox-Naturals where
   four : ℕ
   four = suc three
 
+  five : ℕ
+  five = suc four
+
+  six : ℕ
+  six = suc five
+
+  seven : ℕ
+  seven = suc six
+
   open import Chapter1 using (Bool; true; false)
 
   n=0? : ℕ → Bool
@@ -69,3 +78,35 @@ module Sandbox-Naturals where
   evenEv (suc (suc n)) with evenEv n
   ... | nothing = nothing
   ... | just x = just (suc-suc-even x)
+
+  _+_ : ℕ → ℕ → ℕ
+  zero + b = b
+  suc a + b = a + suc b
+
+  infixl 6 _+_
+
+  open import Relation.Binary.PropositionalEquality using (_≡_; refl)
+
+  _ : two + three ≡ five
+  _ = refl
+
+  _ : four + three ≡ seven
+  _ = refl
+
+  _*_ : ℕ → ℕ → ℕ
+  zero * b = zero
+  suc a * b = b + (a * b)
+
+  infixl 7 _*_
+
+  _ : two * three ≡ six
+  _ = refl
+
+  _^_ : ℕ → ℕ → ℕ
+  a ^ zero = one
+  a ^ suc b = a * (a ^ b)
+
+  infixr 8 _^_
+
+  _ : two ^ two ≡ four
+  _ = refl
