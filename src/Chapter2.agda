@@ -139,7 +139,6 @@ module Misstep-Integers₂ where
       pos : ℕ
       neg : ℕ
 
-
   normalize : ℤ → ℤ
   normalize (mkℤ zero neg) = mkℤ zero neg
   normalize (mkℤ (suc pos) zero) = mkℤ (suc pos) zero
@@ -177,3 +176,51 @@ module Misstep-Integers₂ where
 
   _ : two * -two ≡ -four
   _ = refl
+
+module Misstep-Integers₃ where
+  import Data.Nat as ℕ 
+  open ℕ using (ℕ; zero; suc)
+
+  data ℤ : Set where
+    +_ : ℕ → ℤ 
+    -_ : ℕ → ℤ 
+
+{-
+  _+_ : ℤ → ℤ → ℤ
+  (+ x₀) + (+ x₁) = +(x₀ ℕ.+ x₁)
+  (+ x₀) + (- x₁) = {!   !}
+  (- x₀) + x₁ = {!   !}
+-}
+
+module Sandbox-Integers where
+  import Data.Nat as ℕ
+  open ℕ using (ℕ)
+
+  data Z : Set where
+    +_     : ℕ → Z
+    -[1+_] : ℕ → Z
+  
+  pattern +0 = + ℕ.zero
+  pattern +[1+_] n = + ℕ.suc n
+
+  1ℤ : Z
+  1ℤ = + 1
+
+  -1ℤ : Z
+  -1ℤ = -[1+ 0 ] 
+
+  succ : Z → Z
+  succ (+ x) = + ℕ.suc x
+  succ -[1+ ℕ.zero ] = +0
+  succ -[1+ (ℕ.suc x)] = -[1+ x ]
+
+  pred : Z → Z
+  pred +0 = -1ℤ
+  pred +[1+ x ] = + x
+  pred -[1+ x ] = -[1+ ℕ.suc x ]
+  
+  -_ : Z → Z
+  - +0 = +0
+  - +[1+ x ] = -[1+ x ]
+  - -[1+ x ] = +[1+ x ]
+  
