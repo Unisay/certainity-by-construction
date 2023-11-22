@@ -110,3 +110,70 @@ module Sandbox-Naturals where
 
   _ : two ^ two ≡ four
   _ = refl
+
+  _∸_ : ℕ → ℕ → ℕ
+  a ∸ zero = a
+  zero ∸ suc a = zero
+  suc a ∸ suc b = a ∸ b
+
+  _ : three ∸ two ≡ one
+  _ = refl
+
+  _ : three ∸ five ≡ zero
+  _ = refl
+
+module Misstep-Integers₁ where
+  data ℤ : Set where
+    zero : ℤ
+    succ : ℤ → ℤ
+    pred : ℤ → ℤ
+
+module Misstep-Integers₂ where
+  import Data.Nat as ℕ
+  open ℕ using (ℕ; zero; suc)
+  open import Relation.Binary.PropositionalEquality using (_≡_; refl)
+
+  record ℤ : Set where
+    constructor mkℤ
+    field
+      pos : ℕ
+      neg : ℕ
+
+
+  normalize : ℤ → ℤ
+  normalize (mkℤ zero neg) = mkℤ zero neg
+  normalize (mkℤ (suc pos) zero) = mkℤ (suc pos) zero
+  normalize (mkℤ (suc pos) (suc neg)) = mkℤ pos neg
+
+  _+_ : ℤ → ℤ → ℤ
+  mkℤ a b + mkℤ c d = normalize (mkℤ (a ℕ.+ c) (b ℕ.+ d))
+
+  infixl 5 _+_
+
+  _-_ : ℤ → ℤ → ℤ
+  mkℤ a b - mkℤ c d = normalize (mkℤ (a ℕ.+ d) (b ℕ.+ c))
+
+  infixl 5 _-_
+
+  _*_ : ℤ → ℤ → ℤ
+  mkℤ a b * mkℤ c d = normalize (mkℤ (a ℕ.* c ℕ.+ b ℕ.* d) (a ℕ.* d ℕ.+ b ℕ.* c))
+
+  infixl 6 _*_
+
+  one : ℤ
+  one = mkℤ (suc zero) zero
+
+  two : ℤ
+  two = mkℤ (suc (suc zero)) zero
+
+  -one : ℤ
+  -one = mkℤ zero (suc zero)
+
+  -two : ℤ
+  -two = mkℤ zero (suc (suc zero))
+
+  -four : ℤ
+  -four = mkℤ zero (suc (suc (suc (suc zero))))
+
+  _ : two * -two ≡ -four
+  _ = refl
