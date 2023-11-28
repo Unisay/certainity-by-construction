@@ -139,23 +139,23 @@ module Misstep-Integers₂ where
       pos : ℕ
       neg : ℕ
 
-  normalize : ℤ → ℤ
-  normalize (mkℤ zero neg) = mkℤ zero neg
-  normalize (mkℤ (suc pos) zero) = mkℤ (suc pos) zero
-  normalize (mkℤ (suc pos) (suc neg)) = mkℤ pos neg
+  normaliℤe : ℤ → ℤ
+  normaliℤe (mkℤ zero neg) = mkℤ zero neg
+  normaliℤe (mkℤ (suc pos) zero) = mkℤ (suc pos) zero
+  normaliℤe (mkℤ (suc pos) (suc neg)) = mkℤ pos neg
 
   _+_ : ℤ → ℤ → ℤ
-  mkℤ a b + mkℤ c d = normalize (mkℤ (a ℕ.+ c) (b ℕ.+ d))
+  mkℤ a b + mkℤ c d = normaliℤe (mkℤ (a ℕ.+ c) (b ℕ.+ d))
 
   infixl 5 _+_
 
   _-_ : ℤ → ℤ → ℤ
-  mkℤ a b - mkℤ c d = normalize (mkℤ (a ℕ.+ d) (b ℕ.+ c))
+  mkℤ a b - mkℤ c d = normaliℤe (mkℤ (a ℕ.+ d) (b ℕ.+ c))
 
   infixl 5 _-_
 
   _*_ : ℤ → ℤ → ℤ
-  mkℤ a b * mkℤ c d = normalize (mkℤ (a ℕ.* c ℕ.+ b ℕ.* d) (a ℕ.* d ℕ.+ b ℕ.* c))
+  mkℤ a b * mkℤ c d = normaliℤe (mkℤ (a ℕ.* c ℕ.+ b ℕ.* d) (a ℕ.* d ℕ.+ b ℕ.* c))
 
   infixl 6 _*_
 
@@ -187,40 +187,88 @@ module Misstep-Integers₃ where
 
 {-
   _+_ : ℤ → ℤ → ℤ
-  (+ x₀) + (+ x₁) = +(x₀ ℕ.+ x₁)
-  (+ x₀) + (- x₁) = {!   !}
-  (- x₀) + x₁ = {!   !}
+  (+ x₀) + (+ b) = +(x₀ ℕ.+ b)
+  (+ x₀) + (- b) = {!   !}
+  (- x₀) + b = {!   !}
 -}
 
 module Sandbox-Integers where
   import Data.Nat as ℕ
   open ℕ using (ℕ)
 
-  data Z : Set where
-    +_     : ℕ → Z
-    -[1+_] : ℕ → Z
+  data ℤ : Set where
+    +_     : ℕ → ℤ
+    -[1+_] : ℕ → ℤ
   
   pattern +0 = + ℕ.zero
   pattern +[1+_] n = + ℕ.suc n
 
-  1ℤ : Z
+  1ℤ : ℤ
   1ℤ = + 1
 
-  -1ℤ : Z
+  -1ℤ : ℤ
   -1ℤ = -[1+ 0 ] 
 
-  succ : Z → Z
+  succ : ℤ → ℤ
   succ (+ x) = + ℕ.suc x
   succ -[1+ ℕ.zero ] = +0
   succ -[1+ (ℕ.suc x)] = -[1+ x ]
 
-  pred : Z → Z
+  pred : ℤ → ℤ
   pred +0 = -1ℤ
   pred +[1+ x ] = + x
   pred -[1+ x ] = -[1+ ℕ.suc x ]
   
-  -_ : Z → Z
+  -_ : ℤ → ℤ
   - +0 = +0
   - +[1+ x ] = -[1+ x ]
   - -[1+ x ] = +[1+ x ]
+
+  _⊖_ : ℕ → ℕ → ℤ
+  ℕ.zero ⊖ ℕ.zero = +0
+  ℕ.zero ⊖ ℕ.suc y = -[1+ y ] 
+  ℕ.suc x ⊖ ℕ.zero = +[1+ x ]
+  ℕ.suc x ⊖ ℕ.suc y = x ⊖ y
   
+  _+_ : ℤ → ℤ → ℤ
+  + x + + y = + (x ℕ.+ y)
+  + x + -[1+ y ] = x ⊖ ℕ.suc y
+  -[1+ x ] + + y = y ⊖ ℕ.suc x 
+  -[1+ x ] + -[1+ y ] = -[1+ x ℕ.+ ℕ.suc y ]
+
+  infixl 5 _+_
+
+  _-_ : ℤ → ℤ → ℤ
+  _-_ x y = x + (- y)
+
+  infixl 5 _-_
+
+  _*_ : ℤ → ℤ → ℤ
+  x * +0             =  +0
+  x * +[1+ ℕ.zero  ] =   x
+  x * -[1+ ℕ.zero  ] = - x
+  x * +[1+ ℕ.suc y ] =   x + (x * +[1+ y ]) 
+  x * -[1+ ℕ.suc y ] = - x + (x * -[1+ y ]) 
+
+  infixl 6 _*_
+
+  module Tests where
+    open import Relation.Binary.PropositionalEquality 
+
+    _ : -(+ 1) + -(+ 1) ≡ -(+ 2)
+    _ = refl
+
+    _ : -( -(+ 4)) ≡ + 4
+    _ = refl
+
+    _ : -(+ 2 + + 2) ≡ -(+ 4)
+    _ = refl
+
+    _ : -(+ 2) * -(+ 2) ≡ (+ 4)
+    _ = refl
+
+    _ : -(+ 2) * (+ 6) ≡ -(+ 12)
+    _ = refl
+
+    _ : + 3 - (+ 10) ≡ -(+ 7)
+    _ = refl
