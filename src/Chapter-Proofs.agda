@@ -116,4 +116,26 @@ module Chapter-Proofs where
       a + b * 0
     ∎
     where open ≡-Reasoning
- 
+
+
+  ∨-assoc : (x y z : Bool) → (x ∨ y) ∨ z ≡ x ∨ (y ∨ z)
+  ∨-assoc false y z = refl
+  ∨-assoc true y z = refl
+
+  ∧-assoc : (x y z : Bool) → (x ∧ y) ∧ z ≡ x ∧ (y ∧ z)
+  ∧-assoc false y z = refl
+  ∧-assoc true y z = refl
+
+  +-assoc : (x y z : ℕ) → (x + y) + z ≡ x + (y + z)
+  +-assoc zero y z = refl
+  +-assoc (suc w) y z =
+    begin
+      suc w + y + z
+    ≡⟨⟩
+      suc (w + y + z)
+    ≡⟨ cong suc (+-assoc w y z) ⟩
+      suc (w + (y + z))
+    ≡⟨⟩
+      suc w + (y + z)
+    ∎
+    where open ≡-Reasoning
