@@ -1,4 +1,4 @@
-module Chapter2 where
+module Chapter2-Numbers where
 
 module Definition-Naturals where
   data ℕ : Set where
@@ -30,7 +30,7 @@ module Sandbox-Naturals where
   seven : ℕ
   seven = suc six
 
-  open import Chapter1 using (Bool; true; false)
+  open import Chapter1-Agda using (Bool; true; false)
 
   n=0? : ℕ → Bool
   n=0? zero = true
@@ -272,3 +272,7 @@ module Sandbox-Integers where
 
     _ : + 3 - (+ 10) ≡ -(+ 7)
     _ = refl
+
+open import Data.Nat
+  using (ℕ; zero; suc; _+_; _*_; _^_; _∸_)
+  public

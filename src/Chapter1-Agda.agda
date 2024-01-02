@@ -1,4 +1,4 @@
-module Chapter1 where
+module Chapter1-Agda where
 
 data Bool : Set where
   true : Bool
@@ -106,3 +106,4 @@ module Sandbox-Implicits where
              )
   -}
  
+open import Data.Product using (_×_) public
